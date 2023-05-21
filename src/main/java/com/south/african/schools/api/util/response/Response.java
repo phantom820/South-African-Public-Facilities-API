@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 @SuppressWarnings({"checkstyle:javadocvariable"})
-public class Response<T> {
+public final class Response<T> {
 
     private final String requestId;
     private final T data;

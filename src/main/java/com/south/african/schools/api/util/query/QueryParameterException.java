@@ -12,12 +12,13 @@ import org.springframework.http.HttpStatus;
 @SuppressWarnings("checkstyle:javadocvariable")
 public class QueryParameterException extends Throwable {
 
-    @SuppressWarnings("checkstyle:javadocvariable")
-    enum Type {
+    @SuppressWarnings({"checkstyle:javadocvariable", "checkstyle:missingjavadoctype"})
+    public enum Type {
         INVALID_PARAMETER_VALUE,
         MULTIPLE_PARAMETER_VALUES,
         UNKNOWN_PARAMETER_NAME,
         DUPLICATE_FILTER_KEY,
+        UNKNOWN_FILTER_KEY,
     }
 
     private final HttpStatus httpStatus;
@@ -50,7 +51,13 @@ public class QueryParameterException extends Throwable {
 
     @SuppressWarnings({"checkstyle:missingjavadocmethod"})
     public static QueryParameterException duplicateFilterKey(final String filterKey) {
-        final String message = "Filter key : " + filterKey + ", has been specified more than once.";
+        final String message = "Filter key : " + filterKey + ", has been specified more than once";
         return new QueryParameterException(HttpStatus.BAD_REQUEST, Type.DUPLICATE_FILTER_KEY, message);
+    }
+
+    @SuppressWarnings({"checkstyle:missingjavadocmethod"})
+    public static QueryParameterException unknownFilterKey(final String filterKey) {
+        final String message = "Unknown filter key : " + filterKey;
+        return new QueryParameterException(HttpStatus.BAD_REQUEST, Type.UNKNOWN_FILTER_KEY, message);
     }
 }

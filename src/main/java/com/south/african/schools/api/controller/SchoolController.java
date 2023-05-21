@@ -2,6 +2,8 @@ package com.south.african.schools.api.controller;
 
 import com.south.african.schools.api.entity.School;
 import com.south.african.schools.api.service.SchoolService;
+import com.south.african.schools.api.util.filter.FilterUtil;
+import com.south.african.schools.api.util.query.QueryParameterException;
 import com.south.african.schools.api.util.request.Request;
 import com.south.african.schools.api.util.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,8 @@ public class SchoolController {
 
     @GetMapping("/schools")
     ResponseEntity<Response<List<School>>> getSchools(@RequestAttribute(Request.REQUEST_KEY) final Request request)
-            throws IllegalAccessException {
+            throws IllegalAccessException, QueryParameterException {
+        FilterUtil.validateFilters(School.class, request.getFilters());
         return schoolService.getSchools(request);
     }
 

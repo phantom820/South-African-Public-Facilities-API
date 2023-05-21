@@ -3,6 +3,7 @@ package com.south.african.schools.api.util.filter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.south.african.schools.api.util.query.QueryParameterException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings(
         { "checkstyle:hideutilityclassconstructor",
@@ -40,11 +45,15 @@ public class FilterUtilTest {
         @Filter(name = "payment")
         private final String paymentMethod;
 
-
     }
 
+    private static final class EmptyStudent {
+    }
+
+
+
     @Test
-    public void applyFilter_whenFiltersNull() {
+    public void applyFilter_whenFilterNull() {
         Assert.assertTrue(FilterUtil.applyFilter(null, "a", "b"));
     }
 
@@ -74,7 +83,7 @@ public class FilterUtilTest {
     }
 
     @Test
-    public void applyFilters_whenFiltersAbsent() throws IllegalAccessException {
+    public void applyFilters_whenFiltersAbsent() throws FilterUtilException {
 
         Assert.assertTrue(FilterUtil.applyFilters(null,
                 new Student("bob", "conner", 12, true,
@@ -83,7 +92,7 @@ public class FilterUtilTest {
     }
 
     @Test
-    public void applyFilters_whenFiltersPresent_withMatchingValues() throws IllegalAccessException {
+    public void applyFilters_whenFiltersPresent_withMatchingValues() throws FilterUtilException {
 
         final Student student = new Student("bob", "conner", 12,
                 true, "1", "BURSARY");
@@ -110,7 +119,7 @@ public class FilterUtilTest {
     }
 
     @Test
-    public void applyFilters_whenFiltersPresent_withoutMatchingValues() throws IllegalAccessException {
+    public void applyFilters_whenFiltersPresent_withoutMatchingValues() throws FilterUtilException {
 
         final Student studentA = new Student("bob", "conner", 12,
                 true, "1", "BURSARY");
@@ -139,7 +148,7 @@ public class FilterUtilTest {
     }
 
     @Test
-    public void applyFilters() throws IllegalAccessException {
+    public void applyFilters() throws FilterUtilException {
 
         final Student studentA = new Student("bob", "conner", 12,
                 true, "1", "SELF");
@@ -167,7 +176,7 @@ public class FilterUtilTest {
     }
 
     @Test
-    public void applyFilters_withNullValues() throws IllegalAccessException {
+    public void applyFilters_withNullValues() throws FilterUtilException {
 
         final Student studentA = new Student("bob", "conner", 12,
                 true, "1", "SELF");
@@ -189,6 +198,74 @@ public class FilterUtilTest {
         FilterUtil.applyFilters(filters, students);
 
         Assert.assertEquals(ImmutableSet.of(studentC, studentD), new HashSet<>(students));
+    }
+
+    @Test
+    public void getAllowedFilterNames_whenNoFiltersPresent() {
+
+        final Set<String> allowedFilterNames = FilterUtil.getAllowedFilterKeys(EmptyStudent.class);
+
+        Assert.assertTrue(allowedFilterNames.isEmpty());
+
+    }
+
+    @Test
+    public void getAllowedFilterNames_whenFiltersPresent() {
+
+        final Set<String> allowedFilterNames = FilterUtil.getAllowedFilterKeys(Student.class);
+
+        Assert.assertEquals(ImmutableSet.of("name", "surname", "age", "registered", "payment"), allowedFilterNames);
+
+    }
+
+    @Test
+    public void validateFilters_whenAllFiltersValid() throws QueryParameterException {
+
+        final ImmutableSet<String> values = ImmutableSet.of();
+
+        assertDoesNotThrow(() -> FilterUtil.validateFilters(Student.class, ImmutableMap.of(
+                "name", values,
+                "surname", values,
+                "age",  values,
+                "registered",  values,
+                "payment", values)));
+
+    }
+
+
+    @Test
+    public void validateFilters_withInvalidFilters() throws QueryParameterException {
+
+        final ImmutableSet<String> values = ImmutableSet.of();
+
+        final QueryParameterException exception = assertThrows(QueryParameterException.class,
+                () -> FilterUtil.validateFilters(Student.class, ImmutableMap.of(
+                "name", values,
+                "surname", values,
+                "age",  values,
+                "registered",  values,
+                "a", values)));
+
+        Assert.assertEquals(QueryParameterException.Type.UNKNOWN_FILTER_KEY, exception.getType());
+
+    }
+
+
+    @Test
+    public void validateFilters_whenClassHasNoFilters() throws QueryParameterException {
+
+        final ImmutableSet<String> values = ImmutableSet.of();
+
+        final QueryParameterException exception = assertThrows(QueryParameterException.class,
+                () -> FilterUtil.validateFilters(EmptyStudent.class, ImmutableMap.of(
+                        "name", values,
+                        "surname", values,
+                        "age",  values,
+                        "registered",  values,
+                        "a", values)));
+
+        Assert.assertEquals(QueryParameterException.Type.UNKNOWN_FILTER_KEY, exception.getType());
+
     }
 
 

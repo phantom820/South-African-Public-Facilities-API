@@ -1,20 +1,21 @@
 package com.south.african.schools.api.util.response;
 
 
-import org.json.simple.JSONObject;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 
 
 /**
  * Standardized api error response structure.
  */
+@RequiredArgsConstructor
+@Getter
 @SuppressWarnings({"checkstyle:javadocvariable"})
-public class ErrorResponse extends Response {
+public final class ErrorResponse {
 
+    private final String requestId;
+    private final String error;
+    private final String message;
 
-
-    @SuppressWarnings({"checkstyle:missingJavadocmethod"})
-    public ErrorResponse(final String requestId, final JSONObject data) {
-        super(requestId, null, null);
-    }
 }

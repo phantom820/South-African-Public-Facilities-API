@@ -3,6 +3,7 @@ package com.south.african.schools.api.service;
 import com.south.african.schools.api.entity.School;
 import com.south.african.schools.api.repository.SchoolRepository;
 import com.south.african.schools.api.util.encoding.Json;
+import com.south.african.schools.api.util.encoding.Pagination;
 import com.south.african.schools.api.util.filter.FilterUtil;
 import com.south.african.schools.api.util.request.Request;
 import com.south.african.schools.api.util.response.Response;
@@ -51,9 +52,11 @@ public class SchoolService {
         // first paginated call.
         if (request.getNextToken().isEmpty() && !request.getMaxResults().isEmpty()) {
             final ArrayList<School> schools = schoolRepository.findAllWithLimit(request.getMaxResults().getValue());
-            final String nextToken = schools.isEmpty() ? null : schools.get(schools.size() - 1).getId() + "";
+            final String cursor = schools.isEmpty() ? null : schools.get(schools.size() - 1).getId() + "";
             FilterUtil.applyFilters(request.getFilters(), schools);
-            return new ResponseEntity<>(new Response<>(request.getRequestId(), schools, nextToken), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    new Response<>(request.getRequestId(), schools, Pagination.createToken(cursor)),
+                    HttpStatus.OK);
         }
         // continue pagination.
         final ArrayList<School> schools = schoolRepository.findAfterWithLimit(
