@@ -12,7 +12,7 @@ public final class Pagination {
      */
     private static final Base64.Encoder ENCODER = Base64.getEncoder();
     /**
-     * The base 64 decoder for decoding tokens.
+     * The bas 64 decoder for decoding tokens.
      */
     private static final Base64.Decoder DECODER = Base64.getDecoder();
 

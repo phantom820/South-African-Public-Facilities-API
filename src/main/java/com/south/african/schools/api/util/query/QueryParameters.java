@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -17,11 +18,12 @@ public final class QueryParameters {
 
     private QueryParameters() { }
 
-    public static final String FILTERS_KEY = "filters";
     public static final String MAX_RESULTS_KEY = "maxResults";
     public static final String NEXT_TOKEN_KEY = "nextToken";
-    static final Pattern FILTER_KEY_PATTERN = Pattern.compile("^filter-key-\\d+$");
-    static final Pattern FILTER_VALUE_PATTERN = Pattern.compile("^filter-key-\\d+-value$");
+    public static final Pattern FILTER_KEY_PATTERN = Pattern.compile("^filter-key-\\d+$");
+    public static final Pattern FILTER_VALUE_PATTERN = Pattern.compile("^filter-key-\\d+-value$");
+
+    static final int MAX_FILTER_VALUES = 50;
 
     /**
      * Represents a next token for pagination.
@@ -142,26 +144,32 @@ public final class QueryParameters {
             return ImmutableMap.of();
         }
 
-        final ImmutableMap.Builder<String, ImmutableSet<String>> filtersBuilder = new ImmutableMap.Builder<>();
+        final Map<String, ImmutableSet<String>> filters = new HashMap<>();
 
         for (final String key : parameters.keySet()) {
             if (FILTER_KEY_PATTERN.matcher(key).matches()) {
-                if (parameters.get(key).length > 1) {
+                if (parameters.get(key).length == 0) {
+                    throw QueryParameterException.emptyParameterValue(key);
+                } else if (parameters.get(key).length > 1) {
                     throw QueryParameterException.multipleParameterValues(key);
                 } else if (parameters.get(key)[0] == null || parameters.get(key)[0].isEmpty()) {
                     throw QueryParameterException.invalidParameterValue(key, parameters.get(key)[0]);
                 } else {
                     final String valueKey = key + "-value";
-                    if (!parameters.containsKey(valueKey)) {
-                        throw QueryParameterException.emptyParameterValue(valueKey);
+                    if (filters.containsKey(parameters.get(key)[0])) {
+                        throw QueryParameterException.duplicateFilterKey(parameters.get(key)[0]);
+                    } else if (!parameters.containsKey(valueKey)) {
+                        throw QueryParameterException.noFilterValues(parameters.get(key)[0]);
+                    } else if (parameters.get(valueKey).length > MAX_FILTER_VALUES) {
+                        throw QueryParameterException.tooManyFilterValues(parameters.get(key)[0], MAX_FILTER_VALUES);
                     }
-                    filtersBuilder.put(parameters.get(key)[0],
+                    filters.put(parameters.get(key)[0],
                             Arrays.stream(parameters.get(valueKey)).collect(ImmutableSet.toImmutableSet()));
                 }
             }
         }
 
-        return  filtersBuilder.build();
+        return  ImmutableMap.copyOf(filters);
     }
 
 }

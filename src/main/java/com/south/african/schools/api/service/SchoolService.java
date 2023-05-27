@@ -1,13 +1,12 @@
 package com.south.african.schools.api.service;
 
+import com.google.common.collect.ImmutableList;
 import com.south.african.schools.api.entity.School;
-import com.south.african.schools.api.repository.SchoolRepository;
-import com.south.african.schools.api.util.encoding.Json;
-import com.south.african.schools.api.util.encoding.Pagination;
+import com.south.african.schools.api.repository.Page;
+import com.south.african.schools.api.repository.PaginatedSchoolRepository;
 import com.south.african.schools.api.util.filter.FilterUtil;
 import com.south.african.schools.api.util.request.Request;
 import com.south.african.schools.api.util.response.Response;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +26,27 @@ public class SchoolService {
      * The school data repository.
      */
     @Autowired
-    private SchoolRepository schoolRepository;
+    private PaginatedSchoolRepository schoolRepository;
 
     /**
      * Retrieves a school resource with the given id , otherwise a client exception if id
      * cannot be found.
+     * @param  request The request.
      * @param schoolId The input id to use.
      * @return A list with a single school .
      */
-    public ResponseEntity<Response<List<School>>> getSchool(final String schoolId) {
-        final Optional<School> school = schoolRepository.findBySchoolId(schoolId);
-        if (!school.isEmpty()) {
-            return  new ResponseEntity<>(new Response<>("", List.of(school.get()), null), HttpStatus.OK);
+    public ResponseEntity<Response<List<School>>> getSchool(final Request request, final String schoolId) {
+        final Optional<School> school = schoolRepository.getById(schoolId);
+
+        if (school.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(
+                new Response<>(
+                        request.getRequestId(),
+                        ImmutableList.of(school.get()), null),
+                        HttpStatus.OK);
     }
 
     /**
@@ -48,23 +54,18 @@ public class SchoolService {
      * @param request The request with query params.
      * @return  response with a list of school
      */
-    public ResponseEntity<Response<List<School>>> getSchools(final Request request) throws IllegalAccessException {
-        // first paginated call.
-        if (request.getNextToken().isEmpty() && !request.getMaxResults().isEmpty()) {
-            final ArrayList<School> schools = schoolRepository.findAllWithLimit(request.getMaxResults().getValue());
-            final String cursor = schools.isEmpty() ? null : schools.get(schools.size() - 1).getId() + "";
-            FilterUtil.applyFilters(request.getFilters(), schools);
-            return new ResponseEntity<>(
-                    new Response<>(request.getRequestId(), schools, Pagination.createToken(cursor)),
-                    HttpStatus.OK);
-        }
-        // continue pagination.
-        final ArrayList<School> schools = schoolRepository.findAfterWithLimit(
-                Long.parseLong(request.getNextToken().getValue()), request.getMaxResults().getValue());
-        final String nextToken = schools.isEmpty() ? null : schools.get(schools.size() - 1).getId() + "";
-        FilterUtil.applyFilters(request.getFilters(), schools);
-        return new ResponseEntity<>(new Response<>(request.getRequestId(), schools, nextToken), HttpStatus.OK);
+    public ResponseEntity<Response<List<School>>> getSchools(final Request request) {
 
+        if (request.getFilters() != null && request.getFilters().containsKey("schoolId")) {
+            final ArrayList<School> data = schoolRepository.getByIds(request.getFilters().get("schoolId"));
+            FilterUtil.applyFilters(request.getFilters(), data);
+            return new ResponseEntity<>(new Response<>(request.getRequestId(), data, null), HttpStatus.OK);
+        }
+
+        final Long cursor = request.getNextToken().isEmpty() ? null : Long.parseLong(request.getNextToken().getValue());
+        final Page<School> page = schoolRepository.getPage(request.getMaxResults().getValue(), cursor);
+        FilterUtil.applyFilters(request.getFilters(), page.getData());
+        return new ResponseEntity<>(new Response<>(request.getRequestId(), page.getData(), page.getCursor()), HttpStatus.OK);
     }
 
 
@@ -74,11 +75,8 @@ public class SchoolService {
      * @return  response with a list of school
      */
     public ResponseEntity<List<School>> getSchools() {
-        final ArrayList<School> schools = schoolRepository.findAll();
-        final List<JSONObject> response = Json.marshal(schools);
+        final ArrayList<School> schools = new ArrayList<>();
         return new ResponseEntity<>(schools, HttpStatus.OK);
-
-
     }
 
 }

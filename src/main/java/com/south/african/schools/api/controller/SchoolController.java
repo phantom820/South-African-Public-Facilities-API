@@ -38,13 +38,14 @@ public class SchoolController {
 
     @GetMapping("/schools")
     ResponseEntity<Response<List<School>>> getSchools(@RequestAttribute(Request.REQUEST_KEY) final Request request)
-            throws IllegalAccessException, QueryParameterException {
+            throws QueryParameterException {
         FilterUtil.validateFilters(School.class, request.getFilters());
         return schoolService.getSchools(request);
     }
 
     @GetMapping("/schools/{schoolId}")
-    ResponseEntity<Response<List<School>>> getSchool(@PathVariable final String schoolId) {
-        return schoolService.getSchool(schoolId);
+    ResponseEntity<Response<List<School>>> getSchool(@RequestAttribute(Request.REQUEST_KEY) final Request request,
+                                                     @PathVariable final String schoolId) {
+        return schoolService.getSchool(request, schoolId);
     }
 }

@@ -5,10 +5,6 @@
 
     <module name="SuppressWarningsFilter" />
 
-    <module name="TreeWalker">
-        <module name="SuppressWarningsHolder" />
-    </module>
-
     <module name="NewlineAtEndOfFile"/>
     <module name="FileTabCharacter"/>
     <module name="FileLength"/>
@@ -22,10 +18,12 @@
     <module name="LineLength">
         <property name="max" value="125"/>
     </module>
-    <module name="Translation"/>>
+    <module name="Translation"/>
 
 
     <module name="TreeWalker">
+
+        <module name="SuppressWarningsHolder" />
 
         <module name="AvoidStarImport"/>
         <module name="IllegalImport"/>
