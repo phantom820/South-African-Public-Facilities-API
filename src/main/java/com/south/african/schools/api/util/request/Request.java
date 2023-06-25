@@ -1,11 +1,7 @@
 package com.south.african.schools.api.util.request;
 
 
-import com.google.common.collect.ImmutableSet;
-import com.south.african.schools.api.util.query.QueryParameters;
 import lombok.Getter;
-
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -14,28 +10,17 @@ import java.util.UUID;
  */
 @Getter
 @SuppressWarnings({"checkstyle:javadocvariable"})
-public class Request {
+public final class Request {
 
-    public static final String REQUEST_KEY = "request";
-    private final String requestId;
-    private final Map<String, ImmutableSet<String>> filters;
-    private final QueryParameters.MaxResults maxResults;
-    private final QueryParameters.NextToken nextToken;
+    public static final String KEY = "request";
+    private final String id;
+
 
     /**
      * Constructs a new request with a unique identifier.
-     * @param filters       The filters extracted from query parameters.
-     * @param maxResults    The max results extracted from query parameters.
-     * @param nextToken     The pagination token extracted from query parameters.
      */
-    public Request(final Map<String, ImmutableSet<String>> filters,
-                   final QueryParameters.MaxResults maxResults,
-                   final QueryParameters.NextToken nextToken) {
-
-        this.requestId = generateType1UUID().toString();
-        this.filters = filters;
-        this.maxResults = maxResults;
-        this.nextToken = nextToken;
+    public Request() {
+        this.id = generateType1UUID().toString();
     }
 
     private static long get64LeastSignificantBitsForVersion1() {
@@ -54,8 +39,6 @@ public class Request {
         return timeLow | timeMid | version | timeHi;
     }
 
-
-    @SuppressWarnings("checkstyle:missingjavadocmethod")
     private static UUID generateType1UUID() {
         final long most64SigBits = get64MostSignificantBitsForVersion1();
         final long least64SigBits = get64LeastSignificantBitsForVersion1();

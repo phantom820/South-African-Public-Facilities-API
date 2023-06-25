@@ -3,8 +3,10 @@ package com.south.african.schools.api.controller;
 import com.south.african.schools.api.entity.School;
 import com.south.african.schools.api.service.SchoolService;
 import com.south.african.schools.api.util.filter.FilterUtil;
-import com.south.african.schools.api.util.query.QueryParameterException;
+import com.south.african.schools.api.util.query.Query;
+import com.south.african.schools.api.util.query.QueryException;
 import com.south.african.schools.api.util.request.Request;
+import com.south.african.schools.api.util.resource.ResourceException;
 import com.south.african.schools.api.util.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +39,16 @@ public class SchoolController {
     private SchoolService schoolService;
 
     @GetMapping("/schools")
-    ResponseEntity<Response<List<School>>> getSchools(@RequestAttribute(Request.REQUEST_KEY) final Request request)
-            throws QueryParameterException {
-        FilterUtil.validateFilters(School.class, request.getFilters());
-        return schoolService.getSchools(request);
+    ResponseEntity<Response<List<School>>> getSchools(@RequestAttribute(Request.KEY) final Request request,
+                                                      @RequestAttribute(Query.KEY) final Query query)
+            throws QueryException {
+        FilterUtil.validateFilters(School.class, query.getFilters());
+        return schoolService.getSchools(request, query);
     }
 
     @GetMapping("/schools/{schoolId}")
-    ResponseEntity<Response<List<School>>> getSchool(@RequestAttribute(Request.REQUEST_KEY) final Request request,
-                                                     @PathVariable final String schoolId) {
+    ResponseEntity<Response<List<School>>> getSchool(@RequestAttribute(Request.KEY) final Request request,
+                                                     @PathVariable final String schoolId) throws ResourceException {
         return schoolService.getSchool(request, schoolId);
     }
 }

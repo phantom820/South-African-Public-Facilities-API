@@ -5,7 +5,12 @@ import com.south.african.schools.api.entity.School;
 import com.south.african.schools.api.repository.Page;
 import com.south.african.schools.api.repository.PaginatedSchoolRepository;
 import com.south.african.schools.api.util.filter.FilterUtil;
+import com.south.african.schools.api.util.query.Query;
+import com.south.african.schools.api.util.query.QueryException;
+import com.south.african.schools.api.util.query.parameter.MaxResult;
+import com.south.african.schools.api.util.query.parameter.NextToken;
 import com.south.african.schools.api.util.request.Request;
+import com.south.african.schools.api.util.resource.ResourceException;
 import com.south.african.schools.api.util.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +28,11 @@ import java.util.Optional;
 public class SchoolService {
 
     /**
+     * The key for school id filter.
+     */
+    private static final String SCHOOL_ID_FILTER = "schoolId";
+
+    /**
      * The school data repository.
      */
     @Autowired
@@ -35,48 +45,57 @@ public class SchoolService {
      * @param schoolId The input id to use.
      * @return A list with a single school .
      */
-    public ResponseEntity<Response<List<School>>> getSchool(final Request request, final String schoolId) {
+    public ResponseEntity<Response<List<School>>> getSchool(final Request request, final String schoolId)
+            throws ResourceException {
+
         final Optional<School> school = schoolRepository.getById(schoolId);
 
         if (school.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            throw ResourceException.resourceNotFound(schoolId);
         }
 
         return new ResponseEntity<>(
-                new Response<>(
-                        request.getRequestId(),
-                        ImmutableList.of(school.get()), null),
-                        HttpStatus.OK);
+                    new Response<>(request.getId(), ImmutableList.of(school.get()), null),
+                    HttpStatus.OK);
     }
 
     /**
      * Retrieves all schools.
-     * @param request The request with query params.
+     * @param request The request.
+     * @param  query  The query details.
      * @return  response with a list of school
      */
-    public ResponseEntity<Response<List<School>>> getSchools(final Request request) {
+    public ResponseEntity<Response<List<School>>> getSchools(final Request request,
+                                                             final Query query) throws QueryException {
 
-        if (request.getFilters() != null && request.getFilters().containsKey("schoolId")) {
-            final ArrayList<School> data = schoolRepository.getByIds(request.getFilters().get("schoolId"));
-            FilterUtil.applyFilters(request.getFilters(), data);
-            return new ResponseEntity<>(new Response<>(request.getRequestId(), data, null), HttpStatus.OK);
+        validateRequestParameterCombination(query);
+
+        if (query.getFilters() != null && query.getFilters().containsKey(SCHOOL_ID_FILTER)) {
+            final ArrayList<School> data = schoolRepository.getByIds(query.getFilters().get(SCHOOL_ID_FILTER));
+            FilterUtil.applyFilters(query.getFilters(), data);
+            return new ResponseEntity<>(new Response<>(request.getId(), data, null), HttpStatus.OK);
         }
 
-        final Long cursor = request.getNextToken().isEmpty() ? null : Long.parseLong(request.getNextToken().getValue());
-        final Page<School> page = schoolRepository.getPage(request.getMaxResults().getValue(), cursor);
-        FilterUtil.applyFilters(request.getFilters(), page.getData());
-        return new ResponseEntity<>(new Response<>(request.getRequestId(), page.getData(), page.getCursor()), HttpStatus.OK);
+        final Long cursor = query.hasNextToken() ? Long.parseLong(query.getNextToken().value())
+                : null;
+
+        final Page<School> page = schoolRepository.getPage(query.getMaxResult().value(), cursor);
+        FilterUtil.applyFilters(query.getFilters(), page.getData());
+        return new ResponseEntity<>(new Response<>(request.getId(), page.getData(), page.getCursor()), HttpStatus.OK);
     }
 
+    private void validateRequestParameterCombination(final Query query) throws QueryException {
 
-    /**
-     * Retrieves all schools.
-     *
-     * @return  response with a list of school
-     */
-    public ResponseEntity<List<School>> getSchools() {
-        final ArrayList<School> schools = new ArrayList<>();
-        return new ResponseEntity<>(schools, HttpStatus.OK);
+        if (query.getFilters() == null || query.getFilters().isEmpty()) {
+            return;
+        } else if (query.getFilters().containsKey(SCHOOL_ID_FILTER)
+                && query.isPaginated()) {
+            throw QueryException.invalidParameterCombination(
+                    SCHOOL_ID_FILTER, MaxResult.KEY);
+        } else if (query.getFilters().containsKey(SCHOOL_ID_FILTER)
+                && !query.hasNextToken()) {
+            throw QueryException.invalidParameterCombination(
+                    SCHOOL_ID_FILTER, NextToken.KEY);
+        }
     }
-
 }

@@ -1,7 +1,7 @@
 package com.south.african.schools.api.util.filter;
 
 import com.google.common.collect.ImmutableSet;
-import com.south.african.schools.api.util.query.QueryParameterException;
+import com.south.african.schools.api.util.query.QueryException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public final class FilterUtil {
     public static boolean applyFilter(
             final Map<String, ImmutableSet<String>> filters,
             final String key,
-            final  String value) {
+            final String value) {
 
         if (filters == null || filters.isEmpty()) {
             return true;
@@ -126,10 +126,10 @@ public final class FilterUtil {
      * @param clazz   The resource type to inspect for allowed filters.
      * @param filters The filters from the request.
      * @param <T>
-     * @throws QueryParameterException
+     * @throws QueryException
      */
     public static <T> void validateFilters(final Class<T> clazz, final Map<String, ImmutableSet<String>> filters)
-            throws QueryParameterException {
+            throws QueryException {
 
         if (clazz == null || filters == null || filters.isEmpty()) {
             return;
@@ -139,7 +139,7 @@ public final class FilterUtil {
 
         for (final String filterKey : filters.keySet()) {
             if (!allowedFilterKeys.contains(filterKey)) {
-                throw QueryParameterException.unknownFilterKey(filterKey);
+                throw QueryException.unknownFilterKey(filterKey);
             }
         }
     }
