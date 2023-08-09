@@ -1,10 +1,15 @@
 package com.south.african.schools.api.util.encoding;
 
+import com.south.african.schools.api.util.query.QueryException;
+import com.south.african.schools.api.util.query.parameter.NextToken;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Base64;
 
 /**
  * Utility class for creating , encoding and decoding pagination tokens.
  */
+@Slf4j
 public final class Pagination {
 
     /**
@@ -12,14 +17,14 @@ public final class Pagination {
      */
     private static final Base64.Encoder ENCODER = Base64.getEncoder();
     /**
-     * The bas 64 decoder for decoding tokens.
+     * The base 64 decoder for decoding tokens.
      */
     private static final Base64.Decoder DECODER = Base64.getDecoder();
 
     private Pagination() { }
 
     /**
-     * Creates a pagination from the given datastore cursor.
+     * Creates a pagination token from the given datastore cursor.
      * @param cursor  A pointer to particular item in a datastore.
      * @return A masked cursor.
      */
@@ -32,8 +37,15 @@ public final class Pagination {
      * @param token  The incoming token form the request,
      * @return decoded token to cursor.
      */
-    public static String decodeToken(final String token) {
-        final byte[] decodedBytes = DECODER.decode(token);
-        return new String(decodedBytes);
+    public static String decodeToken(final String token) throws QueryException {
+        try {
+            final byte[] decodedBytes = DECODER.decode(token);
+            return new String(decodedBytes);
+        } catch (final Exception e) {
+            log.error("Failed to decode token {}", token);
+            log.error(e.getMessage());
+            throw QueryException.invalidParameterValue(NextToken.KEY, token);
+        }
+
     }
 }

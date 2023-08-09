@@ -24,10 +24,10 @@ public class AuthInterceptor implements HandlerInterceptor {
                              final Object handler)
             throws Exception {
 
-        log.info("Pre Handle method is Calling");
+
         final Request req = new Request();
+        log.info("Auth interceptor processing request {}", req.getId());
         request.setAttribute(Request.KEY, req);
-        log.info("Processing request id {}", req.getId());
 
         return true;
     }
@@ -38,6 +38,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                            final Object handler,
                            final ModelAndView modelAndView) throws Exception {
 
-        log.info("Post Handle method is Calling");
+        final Request req = (Request) request.getAttribute(Request.KEY);
+        log.info("Auth interceptor post processing request {}", req.getId());
     }
 }

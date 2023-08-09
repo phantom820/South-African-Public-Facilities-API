@@ -1,6 +1,7 @@
 package com.south.african.schools.api.repository;
 
 import com.south.african.schools.api.entity.School;
+import com.south.african.schools.api.util.encoding.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,8 @@ public final class PaginatedSchoolRepository implements PaginatedRepository<Scho
         final ArrayList<School> subData = data.stream().limit(maxResults)
                 .collect(Collectors.toCollection(ArrayList::new));
         final String cursor = subData.get(subData.size() - 1).getId() + "";
-        return new Page<>(subData, cursor);
+        final String token = Pagination.createToken(cursor);
+        return new Page<>(subData, token);
     }
 
     @Override

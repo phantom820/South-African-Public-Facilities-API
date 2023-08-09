@@ -30,7 +30,7 @@ COPY run.sh /app
 # Copy src directory to root of app directory
 COPY  src /app/src
 
-# Install dependencies from pom.xml so things cached
+# Install dependencies from pom.xml so things get cached
 RUN mvn -f app/pom.xml install -Dcheckstyle.skip
 
 

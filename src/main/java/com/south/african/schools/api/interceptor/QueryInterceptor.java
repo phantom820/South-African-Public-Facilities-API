@@ -29,7 +29,9 @@ public class QueryInterceptor implements HandlerInterceptor {
                              final Object handler)
             throws Exception {
 
-        log.info("Query Interceptor Pre Handle method is Calling");
+        final Request req = (Request) request.getAttribute(Request.KEY);
+        log.info("Query interceptor processing request {}", req.getId());
+
         final Map<String, String[]> parameters = request.getParameterMap();
         Query.validateParameters(parameters);
 
@@ -37,10 +39,7 @@ public class QueryInterceptor implements HandlerInterceptor {
         final MaxResult maxResult = new MaxResult(parameters);
         final NextToken nextToken = new NextToken(parameters);
         final Query query = new Query(filters, maxResult, nextToken);
-
-        final Request req = (Request) request.getAttribute(Request.KEY);
         request.setAttribute(Query.KEY, query);
-        log.info("Query interceptor forwarding request id {}", req.getId());
 
         return true;
     }
@@ -51,6 +50,7 @@ public class QueryInterceptor implements HandlerInterceptor {
                            final Object handler,
                            final ModelAndView modelAndView) throws Exception {
 
-        log.info("Query Interceptor Post Handle method is Calling");
+        final Request req = (Request) request.getAttribute(Request.KEY);
+        log.info("Query interceptor post processing request {}", req.getId());
     }
 }

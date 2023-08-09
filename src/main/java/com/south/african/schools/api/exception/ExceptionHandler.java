@@ -9,7 +9,6 @@ import com.south.african.schools.api.util.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
@@ -17,10 +16,10 @@ import org.springframework.web.context.request.WebRequest;
  * Exception handler for our api.
  */
 @ControllerAdvice
-public final class ApplicationExceptionHandler {
+public final class ExceptionHandler {
 
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
-    @ExceptionHandler(value = QueryException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = QueryException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> queryParameterExceptionHandler(
             final QueryException queryParameterException,
@@ -32,7 +31,7 @@ public final class ApplicationExceptionHandler {
     }
 
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
-    @ExceptionHandler(value = ResourceException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = ResourceException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> resourceExceptionHandler(
             final ResourceException resourceException,
@@ -44,7 +43,7 @@ public final class ApplicationExceptionHandler {
     }
 
     @SuppressWarnings("checkstyle:missingjavadocmethod")
-    @ExceptionHandler(value = FilterUtilException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = FilterUtilException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> filterUtilExceptionHandler(
             final WebRequest webRequest) {
