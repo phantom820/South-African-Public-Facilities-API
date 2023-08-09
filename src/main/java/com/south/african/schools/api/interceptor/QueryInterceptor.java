@@ -31,8 +31,8 @@ public class QueryInterceptor implements HandlerInterceptor {
 
         log.info("Query Interceptor Pre Handle method is Calling");
         final Map<String, String[]> parameters = request.getParameterMap();
-
         Query.validateParameters(parameters);
+
         final Map<String, ImmutableSet<String>> filters = Query.extractFilters(parameters);
         final MaxResult maxResult = new MaxResult(parameters);
         final NextToken nextToken = new NextToken(parameters);

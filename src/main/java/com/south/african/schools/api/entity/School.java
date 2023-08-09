@@ -30,7 +30,7 @@ public class School {
     // @JsonIgnore
     private final long id;
 
-    @Filter
+    // @Filter
     private final String schoolId;
 
     @Filter

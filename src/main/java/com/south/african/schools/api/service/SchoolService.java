@@ -6,9 +6,6 @@ import com.south.african.schools.api.repository.Page;
 import com.south.african.schools.api.repository.PaginatedSchoolRepository;
 import com.south.african.schools.api.util.filter.FilterUtil;
 import com.south.african.schools.api.util.query.Query;
-import com.south.african.schools.api.util.query.QueryException;
-import com.south.african.schools.api.util.query.parameter.MaxResult;
-import com.south.african.schools.api.util.query.parameter.NextToken;
 import com.south.african.schools.api.util.request.Request;
 import com.south.african.schools.api.util.resource.ResourceException;
 import com.south.african.schools.api.util.response.Response;
@@ -65,10 +62,7 @@ public class SchoolService {
      * @param  query  The query details.
      * @return  response with a list of school
      */
-    public ResponseEntity<Response<List<School>>> getSchools(final Request request,
-                                                             final Query query) throws QueryException {
-
-        validateRequestParameterCombination(query);
+    public ResponseEntity<Response<List<School>>> getSchools(final Request request, final Query query) {
 
         if (query.getFilters() != null && query.getFilters().containsKey(SCHOOL_ID_FILTER)) {
             final ArrayList<School> data = schoolRepository.getByIds(query.getFilters().get(SCHOOL_ID_FILTER));
@@ -82,20 +76,5 @@ public class SchoolService {
         final Page<School> page = schoolRepository.getPage(query.getMaxResult().value(), cursor);
         FilterUtil.applyFilters(query.getFilters(), page.getData());
         return new ResponseEntity<>(new Response<>(request.getId(), page.getData(), page.getCursor()), HttpStatus.OK);
-    }
-
-    private void validateRequestParameterCombination(final Query query) throws QueryException {
-
-        if (query.getFilters() == null || query.getFilters().isEmpty()) {
-            return;
-        } else if (query.getFilters().containsKey(SCHOOL_ID_FILTER)
-                && query.isPaginated()) {
-            throw QueryException.invalidParameterCombination(
-                    SCHOOL_ID_FILTER, MaxResult.KEY);
-        } else if (query.getFilters().containsKey(SCHOOL_ID_FILTER)
-                && !query.hasNextToken()) {
-            throw QueryException.invalidParameterCombination(
-                    SCHOOL_ID_FILTER, NextToken.KEY);
-        }
     }
 }

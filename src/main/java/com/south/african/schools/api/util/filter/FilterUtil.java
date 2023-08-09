@@ -21,7 +21,7 @@ public final class FilterUtil {
      * @param value     A given value to check for an exact match.
      * @return true if the value has an exact match.
      */
-    public static boolean applyFilter(
+    public static boolean filterMatches(
             final Map<String, ImmutableSet<String>> filters,
             final String key,
             final String value) {
@@ -66,7 +66,7 @@ public final class FilterUtil {
                     final String filterName = field.getAnnotation(Filter.class).name();
                     final String filterKey = !filterName.equals(Filter.DEFAULT_FILTER_NAME) ? filterName : fieldName;
 
-                    if (!applyFilter(filters, filterKey, value)) {
+                    if (!filterMatches(filters, filterKey, value)) {
                         return false;
                     }
                 }

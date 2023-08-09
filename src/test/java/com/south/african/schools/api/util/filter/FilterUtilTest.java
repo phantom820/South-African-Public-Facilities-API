@@ -54,12 +54,12 @@ public class FilterUtilTest {
 
     @Test
     public void applyFilter_whenFiltersNull() {
-        Assert.assertTrue(FilterUtil.applyFilter(null, "a", "b"));
+        Assert.assertTrue(FilterUtil.filterMatches(null, "a", "b"));
     }
 
     @Test
     public void applyFilter_whenFiltersEmpty() {
-        Assert.assertTrue(FilterUtil.applyFilter(ImmutableMap.of(), "a", "b"));
+        Assert.assertTrue(FilterUtil.filterMatches(ImmutableMap.of(), "a", "b"));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class FilterUtilTest {
                 "a", ImmutableSet.of("1", "2", "3"),
                 "b", ImmutableSet.of("1", "2", "3"));
 
-        Assert.assertTrue(FilterUtil.applyFilter(filters, "a", "1"));
+        Assert.assertTrue(FilterUtil.filterMatches(filters, "a", "1"));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class FilterUtilTest {
                 "a", ImmutableSet.of("1", "2", "3"),
                 "b", ImmutableSet.of("1", "2", "3"));
 
-        Assert.assertFalse(FilterUtil.applyFilter(filters, "a", "b"));
+        Assert.assertFalse(FilterUtil.filterMatches(filters, "a", "b"));
     }
 
     @Test

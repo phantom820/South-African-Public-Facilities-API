@@ -21,8 +21,9 @@ public final class Query {
     public static final String KEY = "query";
     public static final Pattern FILTER_KEY_PATTERN = Pattern.compile("^filter-key-\\d+$");
     public static final Pattern FILTER_VALUE_PATTERN = Pattern.compile("^filter-key-\\d+-value$");
+    public static final String RESOURCE_ID_KEY = "resourceId";
     public static final int MAX_FILTER_VALUES = 50;
-
+    public static final int MAX_RESOURCE_ID_VALUES = 100;
     private final MaxResult maxResult;
     private final NextToken nextToken;
     private final Map<String, ImmutableSet<String>> filters;
@@ -56,7 +57,7 @@ public final class Query {
 
         for (final String key : parameters.keySet()) {
             if (FILTER_KEY_PATTERN.matcher(key).matches()) {
-                if (parameters.get(key).length == 0) {
+                if (parameters.get(key) == null ||  parameters.get(key).length == 0) {
                     throw QueryException.emptyParameterValue(key);
                 } else if (parameters.get(key).length > 1) {
                     throw QueryException.multipleParameterValues(key);
@@ -80,6 +81,24 @@ public final class Query {
         return  ImmutableMap.copyOf(filters);
     }
 
+
+    /**
+     * Extracts the resource ids for a request.
+     * @param parameters The query parameters map for a request.
+     * @return An immutable set of resource ids.
+     * @throws QueryException
+     */
+    public static ImmutableSet<String> extractResourceIds(final Map<String, String[]> parameters) throws QueryException {
+        if (parameters == null || parameters.isEmpty() || !parameters.containsKey(RESOURCE_ID_KEY)) {
+            return ImmutableSet.of();
+        } else if (parameters.get(RESOURCE_ID_KEY) == null  || parameters.get(RESOURCE_ID_KEY).length == 0) {
+            throw QueryException.noResourceIdValues();
+        }
+
+        return Arrays.stream(parameters.get(RESOURCE_ID_KEY))
+                .collect(ImmutableSet.toImmutableSet());
+    }
+
     /**
      * Check whether the query is paginated or not. A paginated query has a non empty max results value.
      * @return true if the query has a value for max results.
@@ -98,7 +117,7 @@ public final class Query {
     }
 
     /**
-     * Validates if query parameters consist of allowed values.
+     * Validates if query parameters consist of allowed values and combinations.
      * @param parameters The query parameters map for a request.
      * @throws QueryException
      */
@@ -106,11 +125,16 @@ public final class Query {
 
         if (parameters == null || parameters.isEmpty()) {
             return;
+        } else if (parameters.containsKey(NextToken.KEY) && !parameters.containsKey(MaxResult.KEY)) {
+            throw QueryException.missingParameter(MaxResult.KEY);
+        } else if (parameters.containsKey(MaxResult.KEY) && parameters.containsKey(RESOURCE_ID_KEY)) {
+            throw QueryException.invalidParameterCombination(RESOURCE_ID_KEY, MaxResult.KEY);
         }
+
         for (final String key : parameters.keySet()) {
-            if (!key.equals(MaxResult.KEY) && !key.equals(NextToken.KEY)) {
+            if (!key.equals(MaxResult.KEY) && !key.equals(NextToken.KEY) && !key.equals(RESOURCE_ID_KEY)) {
                 if (!FILTER_KEY_PATTERN.matcher(key).matches() && !FILTER_VALUE_PATTERN.matcher(key).matches()) {
-                    throw QueryException.unknownParameterName(key);
+                    throw QueryException.unknownParameter(key);
                 }
             }
         }

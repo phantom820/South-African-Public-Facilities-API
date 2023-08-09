@@ -37,7 +37,6 @@ public final class PaginatedSchoolRepository implements PaginatedRepository<Scho
             return new Page<>(data, null);
         }
 
-
         final ArrayList<School> subData = data.stream().limit(maxResults)
                 .collect(Collectors.toCollection(ArrayList::new));
         final String cursor = subData.get(subData.size() - 1).getId() + "";

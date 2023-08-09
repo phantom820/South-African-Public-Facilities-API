@@ -14,11 +14,13 @@ public final class QueryException extends Throwable {
         INVALID_PARAMETER_COMBINATION,
         EMPTY_PARAMETER_VALUE,
         MULTIPLE_PARAMETER_VALUES,
-        UNKNOWN_PARAMETER_NAME,
+        MISSING_PARAMETER_VALUE,
+        UNKNOWN_PARAMETER,
         DUPLICATE_FILTER_KEY,
         UNKNOWN_FILTER_KEY,
         TOO_MANY_FILTER_VALUES,
-        NO_FILTER_VALUES
+        NO_FILTER_VALUES,
+        NO_RESOURCE_ID_VALUES
     }
 
 
@@ -54,9 +56,15 @@ public final class QueryException extends Throwable {
     }
 
     @SuppressWarnings({"checkstyle:missingjavadocmethod"})
-    public static QueryException unknownParameterName(final String parameterName) {
+    public static QueryException missingParameter(final String parameterName) {
+        final String message = "Query parameter : " + parameterName + " , is required";
+        return new QueryException(HttpStatus.BAD_REQUEST, Type.MISSING_PARAMETER_VALUE, message);
+    }
+
+    @SuppressWarnings({"checkstyle:missingjavadocmethod"})
+    public static QueryException unknownParameter(final String parameterName) {
         final String message = "Unknown parameter name : " + parameterName;
-        return new QueryException(HttpStatus.BAD_REQUEST, Type.UNKNOWN_PARAMETER_NAME, message);
+        return new QueryException(HttpStatus.BAD_REQUEST, Type.UNKNOWN_PARAMETER, message);
     }
 
 
@@ -85,4 +93,9 @@ public final class QueryException extends Throwable {
         return new QueryException(HttpStatus.BAD_REQUEST, Type.NO_FILTER_VALUES, message);
     }
 
+    @SuppressWarnings({"checkstyle:missingjavadocmethod"})
+    public static QueryException noResourceIdValues() {
+        final String message = "No resource id values specified";
+        return new QueryException(HttpStatus.BAD_REQUEST, Type.NO_RESOURCE_ID_VALUES, message);
+    }
 }

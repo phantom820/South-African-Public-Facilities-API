@@ -11,7 +11,7 @@ import java.util.Map;
 @SuppressWarnings("checkstyle:javadocvariable")
 public final class MaxResult {
 
-    public static final String KEY = "maxResults";
+    public static final String KEY = "maxResult";
 
     public static final Integer DEFAULT_MAX_RESULT = 500;
 
