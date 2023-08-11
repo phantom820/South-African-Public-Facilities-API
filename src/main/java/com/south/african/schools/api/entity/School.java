@@ -1,5 +1,6 @@
 package com.south.african.schools.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.south.african.schools.api.util.filter.Filter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class School {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @JsonIgnore
+    @JsonIgnore
     private final long id;
 
     // @Filter

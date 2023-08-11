@@ -24,7 +24,6 @@ public class AuthInterceptor implements HandlerInterceptor {
                              final Object handler)
             throws Exception {
 
-
         final Request req = new Request();
         log.info("Auth interceptor processing request {}", req.getId());
         request.setAttribute(Request.KEY, req);
