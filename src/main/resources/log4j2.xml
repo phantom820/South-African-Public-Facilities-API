@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="info">
+
+
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
+    </Properties>
+
+
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT" follow="true">
-            <JsonTemplateLayout>
-            <!-- <EventTemplateAdditionalField key="HOME_DIR" value="${env:HOME}"/> -->
-            </JsonTemplateLayout>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <!-- Rolling File Appender -->
-        <RollingFile name="FileAppender"
+        <!-- Rolling File Appender For Application Logs -->
+        <RollingFile name="ApplicationAppender"
                      fileName="logs/application.log"
-                     filePattern="logs/application-%d{yyyy-MM-dd}-%i.log">
+                     filePattern="logs/application-%d{yyyy-MM-dd}-%i.gz">
             <JsonTemplateLayout>
             <!-- <EventTemplateAdditionalField key="HOME_DIR" value="${env:HOME}"/> -->
             </JsonTemplateLayout>
@@ -20,12 +25,33 @@
             </Policies>
             <DefaultRolloverStrategy max="10" />
         </RollingFile>
+
+
+        <!-- Rolling File Appender For Spring Logs, these do not need json format -->
+        <RollingFile name="SpringAppender"
+                     fileName="logs/spring.log"
+                     filePattern="logs/spring-%d{yyyy-MM-dd}-%i.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="2" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
     </Appenders>
 
     <Loggers>
-        <Root level="info">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="FileAppender" />
+
+        <Logger name="org.springframework" additivity="false" level="info">
+            <AppenderRef ref="SpringAppender" />
+        </Logger>
+        <Logger name="com.south.african.schools.api" additivity="false" level="info">
+            <AppenderRef ref="ApplicationAppender" />
+        </Logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
         </Root>
+
     </Loggers>
 </Configuration>
