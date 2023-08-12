@@ -31,6 +31,8 @@ COPY run.sh /app
 COPY  src /app/src
 
 # Install dependencies from pom.xml so things get cached
-RUN mvn -f app/pom.xml install -Dcheckstyle.skip
+WORKDIR app
+RUN ./build.sh
+CMD ./run.sh
 
 

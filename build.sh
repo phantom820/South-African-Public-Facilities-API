@@ -1,2 +1,1 @@
-./mvnw clean
-./mvnw package
+mvn clean package -Dcheckstyle.skip
