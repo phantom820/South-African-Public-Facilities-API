@@ -1,6 +1,7 @@
 package com.south.african.schools.api.util.request;
 
 
+import com.south.african.schools.api.util.metrics.Metrics;
 import lombok.Getter;
 import java.util.Random;
 import java.util.UUID;
@@ -14,6 +15,9 @@ public final class Request {
 
     public static final String KEY = "request";
     private final String id;
+    private final Metrics metrics;
+    private final long startTimeMillis = System.currentTimeMillis();
+    private long endTimeMillis;
 
 
     /**
@@ -21,12 +25,13 @@ public final class Request {
      */
     public Request() {
         this.id = generateType1UUID().toString();
+        this.metrics = new Metrics();
     }
 
     private static long get64LeastSignificantBitsForVersion1() {
-        Random random = new Random();
-        long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
-        long variant3BitFlag = 0x8000000000000000L;
+        final Random random = new Random();
+        final long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
+        final long variant3BitFlag = 0x8000000000000000L;
         return random63BitLong | variant3BitFlag;
     }
 
@@ -45,4 +50,11 @@ public final class Request {
         return new UUID(most64SigBits, least64SigBits);
     }
 
+    /**
+     * Sets the end time of the request in milliseconds to given value.
+     * @param endTimeMillis
+     */
+    public void setEndTimeMillis(final long endTimeMillis) {
+        this.endTimeMillis = endTimeMillis;
+    }
 }

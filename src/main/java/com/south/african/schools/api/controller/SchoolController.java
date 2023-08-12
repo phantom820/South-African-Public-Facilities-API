@@ -39,16 +39,17 @@ public class SchoolController {
     private SchoolService schoolService;
 
     @GetMapping("/schools")
-    ResponseEntity<Response<List<School>>> getSchools(@RequestAttribute(Request.KEY) final Request request,
-                                                      @RequestAttribute(Query.KEY) final Query query)
-            throws QueryException {
+    ResponseEntity<Response<List<School>>> getSchools(
+            @RequestAttribute(Request.KEY) final Request request,
+            @RequestAttribute(Query.KEY) final Query query) throws QueryException {
         FilterUtil.validateFilters(School.class, query.getFilters());
         return schoolService.getSchools(request, query);
     }
 
     @GetMapping("/schools/{schoolId}")
-    ResponseEntity<Response<List<School>>> getSchool(@RequestAttribute(Request.KEY) final Request request,
-                                                     @PathVariable final String schoolId) throws ResourceException {
+    ResponseEntity<Response<List<School>>> getSchool(
+            @RequestAttribute(Request.KEY) final Request request,
+            @PathVariable final String schoolId) throws ResourceException {
         return schoolService.getSchool(request, schoolId);
     }
 }

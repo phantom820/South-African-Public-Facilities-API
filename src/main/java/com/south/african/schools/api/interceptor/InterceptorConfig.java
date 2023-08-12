@@ -12,7 +12,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
     /**
-     * Default application interceptor.
+     * Logging interceptor.
+     */
+    @Autowired
+    private LoggingInterceptor loggingIntercepto;
+
+    /**
+     * Auth interceptor.
      */
     @Autowired
     private AuthInterceptor authInterceptor;
@@ -26,6 +32,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(loggingIntercepto);
         registry.addInterceptor(authInterceptor);
         registry.addInterceptor(queryInterceptor);
     }

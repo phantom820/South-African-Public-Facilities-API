@@ -72,6 +72,10 @@ public class SchoolService {
             final ArrayList<School> data = schoolRepository.getByIds(query.getFilters().get(SCHOOL_ID_FILTER));
             FilterUtil.applyFilters(query.getFilters(), data);
             return new ResponseEntity<>(new Response<>(request.getId(), data, null), HttpStatus.OK);
+        } else if (!query.isPaginated()) {
+            final ArrayList<School> data = schoolRepository.getAll();
+            FilterUtil.applyFilters(query.getFilters(), data);
+            return new ResponseEntity<>(new Response<>(request.getId(), data, null), HttpStatus.OK);
         }
 
         try {

@@ -1,6 +1,8 @@
 package com.south.african.schools.api.interceptor;
 
-import com.south.african.schools.api.util.request.Request;
+//import com.google.common.collect.ImmutableMap;
+//import com.south.african.schools.api.util.encoding.Json;
+//import com.south.african.schools.api.util.request.Request;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,25 +21,29 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @SneakyThrows
     @Override
-    public boolean preHandle(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final Object handler)
-            throws Exception {
+    public boolean preHandle(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Object handler) throws Exception {
 
-        final Request req = new Request();
-        log.info("Auth interceptor processing request {}", req.getId());
-        request.setAttribute(Request.KEY, req);
-
+        // TODO Authentication stuff to be done here.
         return true;
     }
 
     @Override
-    public void postHandle(final HttpServletRequest request,
-                           final HttpServletResponse response,
-                           final Object handler,
-                           final ModelAndView modelAndView) throws Exception {
+    public void postHandle(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Object handler,
+            final ModelAndView modelAndView) throws Exception {
+        // TODO Post authentication stuff to be done here.
+    }
 
-        final Request req = (Request) request.getAttribute(Request.KEY);
-        log.info("Auth interceptor post processing request {}", req.getId());
+    @Override
+    public void afterCompletion(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Object handler,
+            final Exception ex) {
     }
 }

@@ -89,6 +89,11 @@
         <module name="TodoComment"/>
         <module name="UpperEll"/>
 
+        <module name="FinalLocalVariable">
+            <property name="tokens" value="VARIABLE_DEF"/>
+            <property name="validateEnhancedForLoopVariable" value="true"/>
+        </module>
+
     </module>
 
 </module>

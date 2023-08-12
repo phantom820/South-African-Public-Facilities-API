@@ -22,6 +22,16 @@ public final class PaginatedSchoolRepository implements PaginatedRepository<Scho
     @Autowired
     private SchoolRepository schoolRepository;
 
+
+    /**
+     * Fetches all schools.
+     * @return All schools from the datastore.
+     */
+    @Override
+    public ArrayList<School> getAll() {
+        return  schoolRepository.findAll();
+    }
+
     /**
      * Retrieves a page of results limited to be no more than max results page.
      * @param maxResults        The maximum number of items to return.
