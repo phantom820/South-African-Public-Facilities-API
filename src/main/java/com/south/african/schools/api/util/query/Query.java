@@ -2,7 +2,7 @@ package com.south.african.schools.api.util.query;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.south.african.schools.api.util.query.parameter.MaxResult;
+import com.south.african.schools.api.util.query.parameter.MaxResults;
 import com.south.african.schools.api.util.query.parameter.NextToken;
 import lombok.Getter;
 
@@ -24,18 +24,18 @@ public final class Query {
     public static final String RESOURCE_ID_KEY = "resourceId";
     public static final int MAX_FILTER_VALUES = 50;
     public static final int MAX_RESOURCE_ID_VALUES = 100;
-    private final MaxResult maxResult;
+    private final MaxResults maxResults;
     private final NextToken nextToken;
     private final Map<String, ImmutableSet<String>> filters;
 
     /**
      * Creates a query from the given request query parameters.
      * @param filters       The filters associated with the query.
-     * @param maxResult     The max results allowed for the query.
+     * @param maxResults     The max results allowed for the query.
      * @param nextToken     The next token for pagination.
      */
-    public Query(final Map<String, ImmutableSet<String>> filters, final MaxResult maxResult, final NextToken nextToken) {
-        this.maxResult = maxResult;
+    public Query(final Map<String, ImmutableSet<String>> filters, final MaxResults maxResults, final NextToken nextToken) {
+        this.maxResults = maxResults;
         this.nextToken = nextToken;
         this.filters = filters;
     }
@@ -104,7 +104,7 @@ public final class Query {
      * @return true if the query has a value for max results.
      */
     public boolean isPaginated() {
-        return !this.maxResult.isEmpty();
+        return !this.maxResults.isEmpty();
     }
 
 
@@ -125,14 +125,14 @@ public final class Query {
 
         if (parameters == null || parameters.isEmpty()) {
             return;
-        } else if (parameters.containsKey(NextToken.KEY) && !parameters.containsKey(MaxResult.KEY)) {
-            throw QueryException.missingParameter(MaxResult.KEY);
-        } else if (parameters.containsKey(MaxResult.KEY) && parameters.containsKey(RESOURCE_ID_KEY)) {
-            throw QueryException.invalidParameterCombination(RESOURCE_ID_KEY, MaxResult.KEY);
+        } else if (parameters.containsKey(NextToken.KEY) && !parameters.containsKey(MaxResults.KEY)) {
+            throw QueryException.missingParameter(MaxResults.KEY);
+        } else if (parameters.containsKey(MaxResults.KEY) && parameters.containsKey(RESOURCE_ID_KEY)) {
+            throw QueryException.invalidParameterCombination(RESOURCE_ID_KEY, MaxResults.KEY);
         }
 
         for (final String key : parameters.keySet()) {
-            if (!key.equals(MaxResult.KEY) && !key.equals(NextToken.KEY) && !key.equals(RESOURCE_ID_KEY)) {
+            if (!key.equals(MaxResults.KEY) && !key.equals(NextToken.KEY) && !key.equals(RESOURCE_ID_KEY)) {
                 if (!FILTER_KEY_PATTERN.matcher(key).matches() && !FILTER_VALUE_PATTERN.matcher(key).matches()) {
                     throw QueryException.unknownParameter(key);
                 }

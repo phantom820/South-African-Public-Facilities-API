@@ -2,7 +2,7 @@ package com.south.african.schools.api.interceptor;
 
 import com.google.common.collect.ImmutableSet;
 import com.south.african.schools.api.util.query.Query;
-import com.south.african.schools.api.util.query.parameter.MaxResult;
+import com.south.african.schools.api.util.query.parameter.MaxResults;
 import com.south.african.schools.api.util.query.parameter.NextToken;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +32,9 @@ public class QueryInterceptor implements HandlerInterceptor {
         Query.validateParameters(parameters);
 
         final Map<String, ImmutableSet<String>> filters = Query.extractFilters(parameters);
-        final MaxResult maxResult = new MaxResult(parameters);
+        final MaxResults maxResults = new MaxResults(parameters);
         final NextToken nextToken = new NextToken(parameters);
-        final Query query = new Query(filters, maxResult, nextToken);
+        final Query query = new Query(filters, maxResults, nextToken);
         request.setAttribute(Query.KEY, query);
 
         return true;

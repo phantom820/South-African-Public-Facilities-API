@@ -9,20 +9,20 @@ import java.util.Map;
  * Represents the maximum number of results specified in request query string.
  */
 @SuppressWarnings("checkstyle:javadocvariable")
-public final class MaxResult {
+public final class MaxResults {
 
-    public static final String KEY = "maxResult";
+    public static final String KEY = "maxResults";
 
-    public static final Integer DEFAULT_MAX_RESULT = 500;
+    public static final Integer DEFAULT_MAX_RESULTS = 500;
 
-    private final Integer maxResult;
+    private final Integer maxResults;
 
     /**
      * Creates the max results derived from the query parameters of a request.
      * @param parameters The request query parameters.
      */
-    public MaxResult(final Map<String, String[]> parameters) throws QueryException {
-        this.maxResult = extractMaxResult(parameters);
+    public MaxResults(final Map<String, String[]> parameters) throws QueryException {
+        this.maxResults = extractMaxResult(parameters);
     }
 
     @VisibleForTesting
@@ -54,7 +54,7 @@ public final class MaxResult {
      * @return true if there is no next token.
      */
     public boolean isEmpty() {
-        return maxResult == null;
+        return maxResults == null;
     }
 
 
@@ -63,6 +63,6 @@ public final class MaxResult {
      * @return maximum number of results allowed in a request.
      */
     public Integer value() {
-        return this.maxResult;
+        return this.maxResults;
     }
 }

@@ -3,7 +3,7 @@ package com.south.african.schools.api.util.query;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.south.african.schools.api.util.query.parameter.MaxResult;
+import com.south.african.schools.api.util.query.parameter.MaxResults;
 import com.south.african.schools.api.util.query.parameter.NextToken;
 import org.junit.Test;
 import java.util.HashMap;
@@ -28,11 +28,11 @@ public class QueryTest {
     public void query_paginated() throws QueryException {
 
         final Map<String, String[]> params = ImmutableMap.of(
-                "nextToken", new String[]{"A"}, "maxResult", new String[]{"100"});
+                "nextToken", new String[]{"A"}, "maxResults", new String[]{"100"});
 
         final Query query = new Query(
                 null,
-                new MaxResult(params),
+                new MaxResults(params),
                 new NextToken(params));
 
         assertTrue(query.isPaginated());
@@ -190,7 +190,7 @@ public class QueryTest {
     }
 
     @Test
-    public void validateParameters_nextToken_withoutMaxResult() {
+    public void validateParameters_nextToken_withoutMaxResults() {
 
         final QueryException exception = assertThrows(QueryException.class, () -> Query.validateParameters(
                 ImmutableMap.of("nextToken", new String[]{"A"})));
@@ -200,10 +200,10 @@ public class QueryTest {
     }
 
     @Test
-    public void validateParameters_nextToken_withMaxResult() {
+    public void validateParameters_nextToken_withMaxResults() {
 
         assertDoesNotThrow(() -> Query.validateParameters(
-                ImmutableMap.of("nextToken", new String[]{"A"}, "maxResult", new String[]{"100"})));
+                ImmutableMap.of("nextToken", new String[]{"A"}, "maxResults", new String[]{"100"})));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class QueryTest {
         final QueryException exception = assertThrows(QueryException.class, () -> Query.validateParameters(
                 ImmutableMap.of(
                         "nextToken", new String[]{"A"},
-                        "maxResult", new String[]{"200"},
+                        "maxResults", new String[]{"200"},
                         "resourceId", new String[]{"A"})));
 
         assertEquals(QueryException.Type.INVALID_PARAMETER_COMBINATION, exception.getType());
@@ -225,7 +225,7 @@ public class QueryTest {
         final QueryException exception = assertThrows(QueryException.class, () -> Query.validateParameters(
                 ImmutableMap.of(
                         "nextToken", new String[]{"A"},
-                        "maxResult", new String[]{"200"},
+                        "maxResults", new String[]{"200"},
                         "someParam", new String[]{"A"})));
 
         assertEquals(QueryException.Type.UNKNOWN_PARAMETER, exception.getType());

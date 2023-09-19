@@ -2,8 +2,8 @@ package com.south.african.schools.api.service;
 
 import com.google.common.collect.ImmutableList;
 import com.south.african.schools.api.entity.School;
+import com.south.african.schools.api.repository.BaseRepository;
 import com.south.african.schools.api.repository.Page;
-import com.south.african.schools.api.repository.school.PaginatedSchoolRepository;
 import com.south.african.schools.api.util.encoding.Pagination;
 import com.south.african.schools.api.util.filter.FilterUtil;
 import com.south.african.schools.api.util.query.Query;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class SchoolService {
      * The school data repository.
      */
     @Autowired
-    private PaginatedSchoolRepository schoolRepository;
+    private BaseRepository repository;
 
     /**
      * Retrieves a school resource with the given id , otherwise a client exception if id
@@ -48,7 +47,11 @@ public class SchoolService {
     public ResponseEntity<Response<List<School>>> getSchool(final Request request, final String schoolId)
             throws ResourceException {
 
-        final Optional<School> school = schoolRepository.getById(schoolId);
+        final Optional<School> school = repository.getById(
+                School.class,
+                School.class.getSimpleName(),
+                SCHOOL_ID_FILTER,
+                schoolId);
 
         if (school.isEmpty()) {
             throw ResourceException.resourceNotFound(schoolId);
@@ -60,7 +63,7 @@ public class SchoolService {
     }
 
     /**
-     * Retrieves all schools.
+     * Retrieves the scholls data for the given query i.e filters applied.
      * @param request The request.
      * @param  query  The query details.
      * @return  response with a list of school
@@ -69,11 +72,16 @@ public class SchoolService {
             throws QueryException {
 
         if (query.getFilters() != null && query.getFilters().containsKey(SCHOOL_ID_FILTER)) {
-            final ArrayList<School> data = schoolRepository.getByIds(query.getFilters().get(SCHOOL_ID_FILTER));
+            final ArrayList<School> data = repository.getByIds(
+                    School.class,
+                    School.class.getSimpleName(),
+                    query.getFilters().get(SCHOOL_ID_FILTER),
+                    SCHOOL_ID_FILTER);
+
             FilterUtil.applyFilters(query.getFilters(), data);
             return new ResponseEntity<>(new Response<>(request.getId(), data, null), HttpStatus.OK);
         } else if (!query.isPaginated()) {
-            final ArrayList<School> data = schoolRepository.getAll();
+            final ArrayList<School> data = repository.getAll(School.class, School.class.getSimpleName());
             FilterUtil.applyFilters(query.getFilters(), data);
             return new ResponseEntity<>(new Response<>(request.getId(), data, null), HttpStatus.OK);
         }
@@ -81,7 +89,13 @@ public class SchoolService {
         try {
             final Long cursor = query.hasNextToken() ? Long.parseLong(Pagination.decodeToken(query.getNextToken().value()))
                     : null;
-            final Page<School> page = schoolRepository.getPage(query.getMaxResult().value(), cursor);
+            final Page<School> page = repository.getPage(
+                    School.class,
+                    School.class.getSimpleName(),
+                    cursor,
+                    "id",
+                    query.getMaxResults().value(),
+                    school -> school.getId());
             FilterUtil.applyFilters(query.getFilters(), page.getData());
             return new ResponseEntity<>(new Response<>(request.getId(), page.getData(), page.getCursor()), HttpStatus.OK);
         } catch (final NumberFormatException e) {

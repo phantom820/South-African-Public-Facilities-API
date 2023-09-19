@@ -20,6 +20,7 @@ public final class QueryException extends Throwable {
         UNKNOWN_FILTER_KEY,
         TOO_MANY_FILTER_VALUES,
         NO_FILTER_VALUES,
+        INVALID_FILTER_VALUE,
         NO_RESOURCE_ID_VALUES
     }
 
@@ -35,8 +36,15 @@ public final class QueryException extends Throwable {
     }
 
     @SuppressWarnings({"checkstyle:missingjavadocmethod"})
-    public static QueryException invalidParameterCombination(final String arg1,
-                                                             final String arg2) {
+    public static QueryException invalidFilterValue(final String filterName, final String value) {
+        final String message = "Invalid filter value : " + value + " , for query filter : " + filterName;
+        return new QueryException(HttpStatus.BAD_REQUEST, Type.INVALID_FILTER_VALUE, message);
+    }
+
+    @SuppressWarnings({"checkstyle:missingjavadocmethod"})
+    public static QueryException invalidParameterCombination(
+            final String arg1,
+            final String arg2) {
         final String[] args = new String[]{arg1, arg2};
         final String message = "Invalid parameter combination, query parameters : [" + String.join(" ,", args) + "]"
                 + "cannot be specified in together";

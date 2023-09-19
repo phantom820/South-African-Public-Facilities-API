@@ -28,6 +28,7 @@ public class Hospital {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Filter
     private final Long hospitalId;
 
     @Filter
