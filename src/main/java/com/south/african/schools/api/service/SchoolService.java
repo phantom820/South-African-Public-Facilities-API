@@ -3,7 +3,7 @@ package com.south.african.schools.api.service;
 import com.google.common.collect.ImmutableList;
 import com.south.african.schools.api.entity.School;
 import com.south.african.schools.api.repository.Page;
-import com.south.african.schools.api.repository.PaginatedSchoolRepository;
+import com.south.african.schools.api.repository.school.PaginatedSchoolRepository;
 import com.south.african.schools.api.util.encoding.Pagination;
 import com.south.african.schools.api.util.filter.FilterUtil;
 import com.south.african.schools.api.util.query.Query;

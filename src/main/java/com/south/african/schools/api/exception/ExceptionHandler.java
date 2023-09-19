@@ -32,14 +32,13 @@ public final class ExceptionHandler {
 
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @org.springframework.web.bind.annotation.ExceptionHandler(value = ResourceException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> resourceExceptionHandler(
             final ResourceException resourceException,
             final WebRequest webRequest) {
         final Request request = (Request) webRequest.getAttribute(Request.KEY,  WebRequest.SCOPE_REQUEST);
         return new ResponseEntity<>(new ErrorResponse(request.getId(),
                 resourceException.getType().toString(),
-                resourceException.getMessage()), HttpStatus.NOT_FOUND);
+                resourceException.getMessage()), resourceException.getHttpStatus());
     }
 
     @SuppressWarnings("checkstyle:missingjavadocmethod")

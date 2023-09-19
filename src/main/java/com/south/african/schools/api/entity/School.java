@@ -29,9 +29,9 @@ public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private final long id;
+    private final Long id;
 
-    // @Filter
+     @Filter
     private final String schoolId;
 
     @Filter
@@ -65,7 +65,7 @@ public class School {
     @Filter
     private final String localMunicipality;
 
-    @Column(length = 8)
+    @Column(length = 13)
     @Filter
     private final String postalCode;
 

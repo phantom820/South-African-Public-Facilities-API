@@ -15,7 +15,8 @@ public class ResourceException extends Throwable {
 
     @SuppressWarnings({"checkstyle:javadocvariable", "checkstyle:missingjavadoctype"})
     public enum Type {
-        RESOURCE_NOT_FOUND
+        RESOURCE_NOT_FOUND,
+        RESOURCE_ID_MALFORMED
     }
 
     private final HttpStatus httpStatus;
@@ -26,5 +27,11 @@ public class ResourceException extends Throwable {
     public static ResourceException resourceNotFound(final String resourceId) {
         final String message = "The resource does not exist";
         return new ResourceException(HttpStatus.NOT_FOUND, Type.RESOURCE_NOT_FOUND, message);
+    }
+
+    @SuppressWarnings({"checkstyle:missingjavadocmethod"})
+    public static ResourceException resourceIdMalformed(final String resource, final String resourceId) {
+        final String message = "The resource id : " + resourceId + "for the " + resource + " resource is malformed.";
+        return new ResourceException(HttpStatus.BAD_REQUEST, Type.RESOURCE_NOT_FOUND, message);
     }
 }
