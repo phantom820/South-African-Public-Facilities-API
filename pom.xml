@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com</groupId>
-	<artifactId>south.african.schools.api</artifactId>
+	<artifactId>south.african.data.api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>south.african.schools.api</name>
-	<description>API for retrieving information about South African schools</description>
+	<name>south.african.data.api</name>
+	<description>API for retrieving information about South African public facilities</description>
 	<properties>
 		<java.version>11</java.version>
 		<log4j2.version>2.20.0</log4j2.version>
