@@ -1,1 +1,1 @@
-# South-African-Schools-API-
+# South-African-Public-Facilities-API-
