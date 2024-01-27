@@ -12,7 +12,7 @@ providers:
     # <string, required> provider type. Required
     type: file
     # <bool> disable dashboard deletion
-    disableDeletion: false
+    disableDeletion: true
     # <bool> enable dashboard editing
     editable: true
     # <int> how often Grafana will scan for changed dashboards

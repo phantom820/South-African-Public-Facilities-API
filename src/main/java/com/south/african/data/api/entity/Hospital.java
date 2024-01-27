@@ -42,5 +42,5 @@ public class Hospital {
     private final String province;
 
     @Filter
-    private final String district;
+    private final String districtMunicipality;
 }

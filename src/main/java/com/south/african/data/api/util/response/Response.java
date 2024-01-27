@@ -1,5 +1,6 @@
 package com.south.african.data.api.util.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,5 +17,7 @@ public final class Response<T extends List<?>> {
 
     private final String requestId;
     private final T data;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String nextToken;
 }

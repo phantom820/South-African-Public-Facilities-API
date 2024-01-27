@@ -1,10 +1,12 @@
 package com.south.african.data.api.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableList;
 import com.south.african.data.api.repository.model.Page;
 import com.south.african.data.api.util.encoding.Pagination;
 import com.south.african.data.api.util.query.Query;
 import com.south.african.data.api.util.query.QueryException;
+import com.south.african.data.api.util.query.parameter.MaxResults;
 import com.south.african.data.api.util.request.Request;
 import com.south.african.data.api.util.response.Response;
 import com.south.african.data.api.entity.Hospital;
@@ -66,8 +68,6 @@ public class HospitalService {
         } catch (final NumberFormatException e) {
             throw ResourceException.resourceIdMalformed("hospital", hospitalId);
         }
-
-
     }
 
     /**
@@ -79,7 +79,9 @@ public class HospitalService {
     public ResponseEntity<Response<List<Hospital>>> getHospitals(final Request request, final Query query)
             throws QueryException {
 
-        if (query.getFilters() != null && query.getFilters().containsKey(HOSPITAL_ID_FILTER)) {
+        if (query.getFilters() != null && query.getFilters().containsKey(HOSPITAL_ID_FILTER) && query.isPaginated()) {
+            throw QueryException.invalidParameterCombination(HOSPITAL_ID_FILTER, MaxResults.KEY);
+        } else if (query.getFilters() != null && query.getFilters().containsKey(HOSPITAL_ID_FILTER)) {
 
             final Set<Long> hospitalIds = new HashSet<>();
             for (final String hospitalId : query.getFilters().get(HOSPITAL_ID_FILTER)) {
@@ -93,8 +95,8 @@ public class HospitalService {
             final ArrayList<Hospital> data = repository.getByIds(
                     Hospital.class,
                     Hospital.class.getSimpleName(),
-                    hospitalIds,
-                    HOSPITAL_ID_FILTER);
+                    HOSPITAL_ID_FILTER,
+                    hospitalIds);
 
             FilterUtil.applyFilters(query.getFilters(), data);
             return new ResponseEntity<>(new Response<>(request.getId(), data, null), HttpStatus.OK);
@@ -105,8 +107,8 @@ public class HospitalService {
         }
 
         try {
-            final Long cursor = query.hasNextToken() ? Long.parseLong(Pagination.decodeToken(query.getNextToken().value()))
-                    : null;
+            final Long cursor = query.hasNextToken() ? Long.parseLong(
+                    Pagination.decodeToken(query.getNextToken().value(), Hospital.class.getSimpleName())) : null;
             final Page<Hospital> page = repository.getPage(
                     Hospital.class,
                     Hospital.class.getSimpleName(),
@@ -117,7 +119,7 @@ public class HospitalService {
 
             FilterUtil.applyFilters(query.getFilters(), page.getData());
             return new ResponseEntity<>(new Response<>(request.getId(), page.getData(), page.getCursor()), HttpStatus.OK);
-        } catch (final NumberFormatException e) {
+        } catch (final NumberFormatException | JsonProcessingException e) {
             throw QueryException.invalidParameterValue(NextToken.KEY, query.getNextToken().value());
         }
     }

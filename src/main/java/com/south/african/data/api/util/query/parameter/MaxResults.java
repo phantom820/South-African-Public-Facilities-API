@@ -10,6 +10,8 @@ import java.util.Map;
  */
 @SuppressWarnings("checkstyle:javadocvariable")
 public final class MaxResults {
+    public static final String DESCRIPTION =
+            "The maximum number of items to return in a single request. The range of allowed values is [5, 1000].";
 
     public static final String KEY = "maxResults";
 

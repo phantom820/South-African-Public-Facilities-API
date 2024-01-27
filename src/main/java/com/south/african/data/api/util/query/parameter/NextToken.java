@@ -11,6 +11,9 @@ import java.util.Map;
 @SuppressWarnings("checkstyle:javadocvariable")
 public class NextToken {
 
+    public static final String DESCRIPTION =
+            "The pagination token from a previous API call.";
+
     public static final String KEY = "nextToken";
 
     private final String nextToken;

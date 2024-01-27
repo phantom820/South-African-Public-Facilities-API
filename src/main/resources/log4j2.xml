@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="info">
 
-
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
     </Properties>
@@ -41,11 +40,10 @@
     </Appenders>
 
     <Loggers>
-
         <Logger name="org.springframework" additivity="false" level="info">
             <AppenderRef ref="SpringAppender" />
         </Logger>
-        <Logger name="com.south.african.schools.api" additivity="false" level="info">
+        <Logger name="com.south.african.data.api" additivity="false" level="info">
             <AppenderRef ref="ApplicationAppender" />
         </Logger>
 

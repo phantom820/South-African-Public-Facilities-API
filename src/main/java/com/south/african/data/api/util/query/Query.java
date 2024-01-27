@@ -75,6 +75,8 @@ public final class Query {
                     filters.put(parameters.get(key)[0],
                             Arrays.stream(parameters.get(valueKey)).collect(ImmutableSet.toImmutableSet()));
                 }
+            } else if (FILTER_VALUE_PATTERN.matcher(key).matches() && !parameters.containsKey(key.replace("-value", ""))) {
+                throw QueryException.noFilterKey(key.replace("-value", ""));
             }
         }
 

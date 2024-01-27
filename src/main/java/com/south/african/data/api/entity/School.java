@@ -2,6 +2,7 @@ package com.south.african.data.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.south.african.data.api.util.filter.Filter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,8 @@ public class School {
     @JsonIgnore
     private final Long id;
 
-     @Filter
-    private final String schoolId;
+    @Filter
+    private final Long schoolId;
 
     @Filter
     private final String name;
@@ -65,8 +66,7 @@ public class School {
     @Filter
     private final String localMunicipality;
 
-    @Column(length = 13)
     @Filter
-    private final String postalCode;
+    private final Integer postalCode;
 
 }

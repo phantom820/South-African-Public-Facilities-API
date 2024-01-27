@@ -75,6 +75,23 @@ public class QueryTest {
 
     }
 
+
+    @Test
+    public void extractFilters_whenFilterValuesPresent_withoutFilterKey() throws QueryException {
+
+        final Map<String, String[]> parameters = new HashMap<>();
+        parameters.put("filter-key-1-value", new String[]{"foo"});
+
+
+
+        final QueryException exception = assertThrows(QueryException.class,
+                () -> Query.extractFilters(parameters));
+
+        assertEquals(QueryException.Type.NO_FILTER_KEY, exception.getType());
+
+    }
+
+
     @Test
     public void extractFilters_whenFilterKey_hasMultipleValues() {
 

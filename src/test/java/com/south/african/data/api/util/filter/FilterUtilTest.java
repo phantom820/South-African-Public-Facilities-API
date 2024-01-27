@@ -50,8 +50,6 @@ public class FilterUtilTest {
     private static final class EmptyStudent {
     }
 
-
-
     @Test
     public void applyFilter_whenFiltersNull() {
         Assert.assertTrue(FilterUtil.filterMatches(null, "a", "b"));
