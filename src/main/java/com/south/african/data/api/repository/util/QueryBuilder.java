@@ -26,7 +26,7 @@ public final class QueryBuilder {
     private static final String GET_ALL_AFTER_ID_SORTED_BY_ID_QUERY_TEMPLATE =
             "SELECT e FROM $entity e WHERE e.$id > $value ORDER BY e.$id";
 
-    private QueryBuilder() {}
+    private QueryBuilder() { }
 
     public static String getAll(final String entity) {
         return  GET_ALL_QUERY_TEMPLATE.replace("$entity", entity);

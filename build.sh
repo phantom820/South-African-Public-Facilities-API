@@ -1,1 +1,1 @@
-mvn clean package -Dcheckstyle.skip
+gradle build

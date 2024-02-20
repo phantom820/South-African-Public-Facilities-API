@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 mvnw
 mvnw.cmd
+.mvn
 
 ### STS ###
 .apt_generated
@@ -33,6 +34,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## gradle
+/build
+./gradle
+.gradle/
 
 ### Docker temp ###
 /docker/temp

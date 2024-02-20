@@ -20,6 +20,11 @@
     </module>
     <module name="Translation"/>
 
+    <module name="SuppressionSingleFilter">
+        <property name="checks" value="JavadocMethod"/>
+        <property name="message" value="Expected @param tag for '&lt;"/>
+    </module>
+
 
     <module name="TreeWalker">
 
@@ -35,7 +40,9 @@
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
 
-        <module name="JavadocMethod"/>
+        <module name="JavadocMethod">
+            <property name="allowMissingThrowsTags" value="true"/>
+        </module>
         <module name="JavadocType"/>
         <module name="JavadocVariable"/>
         <module name="JavadocStyle"/>

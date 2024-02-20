@@ -42,6 +42,7 @@ public final class Pagination {
     /**
      * Creates a pagination token from the given datastore cursor.
      * @param cursor  A pointer to particular item in a datastore.
+     * @param  resource The resource the token is tied to.
      * @return A masked cursor.
      */
     public static String createToken(final String cursor, final String resource) throws JsonProcessingException {
@@ -54,7 +55,8 @@ public final class Pagination {
 
     /**
      * Decodes a given pagination token.
-     * @param token  The incoming token form the request,
+     * @param token  The incoming token form the request
+     * @param resource The resource the token is tied to.
      * @return decoded token to cursor.
      */
     public static String decodeToken(final String token, final String resource) throws QueryException {

@@ -52,7 +52,7 @@ public final class Request {
 
     /**
      * Sets the end time of the request in milliseconds to given value.
-     * @param endTimeMillis
+     * @param endTimeMillis The end time in milliseconds
      */
     public void setEndTimeMillis(final long endTimeMillis) {
         this.endTimeMillis = endTimeMillis;

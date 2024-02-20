@@ -72,7 +72,6 @@ public class SchoolService {
     public ResponseEntity<Response<List<School>>> getSchools(final Request request, final Query query)
             throws QueryException {
 
-
         if (query.getFilters() != null && query.getFilters().containsKey(SCHOOL_ID_FILTER) && query.isPaginated()) {
             throw QueryException.invalidParameterCombination(SCHOOL_ID_FILTER, MaxResults.KEY);
         } else if (query.getFilters() != null && query.getFilters().containsKey(SCHOOL_ID_FILTER)) {
@@ -91,8 +90,11 @@ public class SchoolService {
         }
 
         try {
-            final Long cursor = query.hasNextToken() ?
-                    Long.parseLong(Pagination.decodeToken(query.getNextToken().value(), School.class.getSimpleName())) : null;
+            final Long cursor = query.hasNextToken()
+                    ?
+                    Long.parseLong(Pagination.decodeToken(
+                            query.getNextToken().value(),
+                            School.class.getSimpleName())) : null;
             final Page<School> page = repository.getPage(
                     School.class,
                     School.class.getSimpleName(),

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
         allowedHeaders = "*",
         methods = {RequestMethod.GET}
 )
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "checkstyle:missingjavadocmethod"})
 @Controller
 public class HomeController {
     @GetMapping("/")

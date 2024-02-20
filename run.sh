@@ -1,5 +1,10 @@
 source .env
 source ./build.sh
-java -jar target/south.african.data.api-0.0.1-SNAPSHOT.jar --server.port=$PORT server.address=$ADDRESS \
---spring.datasource.username=${DB_USERNAME} --spring.datasource.password=${DB_PASSWORD} \
---spring.datasource.url=${DB_URL}
+if [ $? -eq 0 ]
+then
+  gradle bootRun -Dserver.port=$PORT -Dserver.address=$ADDRESS \
+  -Dspring.datasource.username=${DB_USERNAME} -Dspring.datasource.password=${DB_PASSWORD} \
+  -Dspring.datasource.url=${DB_URL}
+else
+  exit 1
+fi

@@ -82,8 +82,6 @@ public class QueryTest {
         final Map<String, String[]> parameters = new HashMap<>();
         parameters.put("filter-key-1-value", new String[]{"foo"});
 
-
-
         final QueryException exception = assertThrows(QueryException.class,
                 () -> Query.extractFilters(parameters));
 

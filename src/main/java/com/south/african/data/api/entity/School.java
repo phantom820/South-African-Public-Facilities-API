@@ -2,7 +2,6 @@ package com.south.african.data.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.south.african.data.api.util.filter.Filter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;

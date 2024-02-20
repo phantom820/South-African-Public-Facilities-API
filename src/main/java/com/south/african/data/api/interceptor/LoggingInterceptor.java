@@ -28,7 +28,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         final Request req = new Request();
         ThreadContext.put("requestId", req.getId());
-        log.info("Starting processing request");
+        log.info("Starting processing request : " + req.getId());
         request.setAttribute(Request.KEY, req);
 
         return true;
@@ -45,6 +45,6 @@ public class LoggingInterceptor implements HandlerInterceptor {
         req.setEndTimeMillis(System.currentTimeMillis());
         req.getMetrics().setLatencyMillis(req.getEndTimeMillis() - req.getStartTimeMillis());
         ThreadContext.put("metrics", Json.string(req.getMetrics()));
-        log.info("Finished processing request");
+        log.info("Finished processing request : " + req.getId());
     }
 }
